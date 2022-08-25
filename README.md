@@ -1,4 +1,4 @@
-### Hi there 👋
+### hi
 
 <!--
 **Anton2319/Anton2319** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
