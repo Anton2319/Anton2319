@@ -1,16 +1,42 @@
+body {
+    font-family: Roboto, sans-serif;
+    background-color: black;
+}
+
 #main {
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-}
-body {
-    font-family: Roboto, sans-serif;
-    background-image: url('bg.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+}
+#content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+@media (orientation: landscape) {
+    @media (prefers-color-scheme: dark) {
+        #main {
+            background-image: url('backgrounds/bg2.jpg');
+        }
+    }
+    @media (prefers-color-scheme: light) {
+        #main {
+            background-image: url('backgrounds/bg1.jpg');
+        }
+    }
+}
+
+@media (orientation: portrait) {
+    #main {
+        background-image: url('backgrounds/bg-mob2.jpg');
+    }
 }
 .social {
     display: inline-flex;
@@ -25,17 +51,21 @@ body {
     display: flex;
     flex-direction: column;
 }
-.hostinfo {
-    margin-top: 2em;
-    display: flex;
+@media (orientation: landscape) {
+    .central-adaptive {
+        text-align: center;
+        display: flex;
+        flex-direction: row;
+        gap: 4em;
+    }
 }
-.hostinfo img {
-    margin: 0.7em;
-}
-.hostinfo h5 {
-    margin: 0.7em;
-    color: white;
-    font-size: 1.25rem;
+@media (orientation: portrait) {
+    .central-adaptive {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 2em;
+    }
 }
 h1 {
     font-size: 48px !important;
@@ -45,6 +75,9 @@ h2 {
     color: white;
 }
 h3 {
+    color: white;
+}
+h4 {
     color: white;
 }
 a {
