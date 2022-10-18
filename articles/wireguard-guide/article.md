@@ -9,7 +9,7 @@ For that project I used Java programming language, because i don't know Kotlin, 
 #### My IDE version:
 ![](media/Screenshot-2022-10-18-at-07.34.09.png)
 
-####Project settings:
+#### Project settings:
 ![](media/Screenshot-2022-10-18-at-07.39.15.png)
 
 
