@@ -7,10 +7,10 @@ I decided to write this short piece of documentation to make it easier for devel
 ##Prerequisites
 For that project I used Java programming language, because i don't know Kotlin, but due to a lot of similarities of Kotlin and Java, this guide will be relevant for Kotlin too. 
 ####My IDE version:
-![](file:///Users/anton/Desktop/Screenshot-2022-10-18-at-07.34.09.png)
+![](media/Screenshot-2022-10-18-at-07.34.09.png)
 
 ####Project settings:
-![](file:///Users/anton/Desktop/Screenshot-2022-10-18-at-07.39.15.png)
+![](media/Screenshot-2022-10-18-at-07.39.15.png)
 
 
 ##Installation and importing
@@ -86,7 +86,7 @@ First, let's add a button to MainActivity. Open **MainActivity.xml**, and paste 
 ```
 This will add a button that would make the layout look like this:
 
-![](file:///Users/anton/Desktop/Screenshot-2022-10-18-at-08.23.27.png)
+![](media/Screenshot-2022-10-18-at-08.23.27.png)
 
 In **MainActivity.java**, we need to create connect method, that we specified in onClick property in layout xml. Copy/paste that code to create method:
 
@@ -146,11 +146,11 @@ Now, let's fire up our app, and see what happens!
 
 Accept that:
 
-![](file:///Users/anton/Desktop/Screenshot-2022-10-18-at-08.54.47.png)
+![](media/Screenshot-2022-10-18-at-08.54.47.png)
 
 As you see, it works perfectly fine!
 
-![](file:///Users/anton/Desktop/Screenshot-2022-10-18-at-08.56.20.png)
+![](media/Screenshot-2022-10-18-at-08.56.20.png)
 
 
 ##Class overview
