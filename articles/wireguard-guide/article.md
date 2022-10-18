@@ -1,19 +1,19 @@
-#Comprehendable guide on Wireguard Tunnel library for Android
+# Comprehendable guide on Wireguard Tunnel library for Android
 
 I decided to write this short piece of documentation to make it easier for developers like me to actually use it, it took me over a week to go through official wireguard app to get an idea, how everything works, so I hope I can save you some time! :)
 
 **Disclaimer**: I'm not a professional developer, do not have the proper coding skills, and overall my brain melts on any technical topic. Please don't attack me if I got the details wrong.
 
-##Prerequisites
+## Prerequisites
 For that project I used Java programming language, because i don't know Kotlin, but due to a lot of similarities of Kotlin and Java, this guide will be relevant for Kotlin too. 
-####My IDE version:
+#### My IDE version:
 ![](media/Screenshot-2022-10-18-at-07.34.09.png)
 
 ####Project settings:
 ![](media/Screenshot-2022-10-18-at-07.39.15.png)
 
 
-##Installation and importing
+## Installation and importing
 Installation is done fairly easily, open the **build.gradle (app)** and add this line to dependencies:
 `    implementation "com.wireguard.android:tunnel:1.0.20211029"
 `
@@ -57,7 +57,7 @@ Also, we need to specify to Android, that we would use vpn-service, and bind GoB
 ```
 This short setup is already enough to import the library into the code. Let's try to do it to make our first connection!
 
-##First connection
+## First connection
 
 Our simple application will consist of 1 simple button - connect to server. Everything will be specified from the code, this includes endpoint ip, privatekey, publickey, and all other configuration parameters.
 
@@ -153,41 +153,41 @@ As you see, it works perfectly fine!
 ![](media/Screenshot-2022-10-18-at-08.56.20.png)
 
 
-##Class overview
+## Class overview
 
 Now, let's overview some of the common classes and interfaces that are part of the wireguard library.
 
-###GoBackend
+### GoBackend
 
 Class, that provides you with WireGuard backend in userspace. This is a vpn-service implementation, so it requires permission from the user, and consumes a lot of battery power when connected to a server.
 
-###WgQuickBackend
+### WgQuickBackend
 
 Kernel-space implementation of WireGuard backend. Much more stable and efficient on resources, but requires root access.
 
-###Tunnel (Interface)
+### Tunnel (Interface)
 
 Represents a Wireguard tunnel. Self-explanatory.
 
-###Backend (Interface)
+### Backend (Interface)
 
 If you are fearless, implement your own WireGuard backend with this interface, but considering that you are reading this article, you are probably not. :)
 
-###Config
+### Config
 
 Represents fully baked wireguard config, that you could pass to backend.
 
-###Config.Builder
+### Config.Builder
 
 Builds you a Config.
 
-###com.wireguard.crypto (package)
+### com.wireguard.crypto (package)
 
 Everything you need to work with keys and keypairs.
 
 For advanced class documentation I recommend you to visit JavaDoc for WireGuard: [https://javadoc.io/doc/com.wireguard.android/tunnel/latest/index.html](https://javadoc.io/doc/com.wireguard.android/tunnel/latest/index.html) 
 
-##Anything else??
+## Anything else??
 
 I might miss something, but remember, this is a short guide for those, who won't bother to read code of the official implementation. Got something to add? Email me to [anton_2319@outlook.com](mailto:anton_2319@outlook.com), DM on IG: [@anton_2319](https://www.instagram.com/anton_2319/), Twitter: [@AntonRudkovskij](https://twitter.com/AntonRudkovskij), or Telegram: [@infinitewanderer](https://t.me/infinitewanderer)
 Thanks for reading this!
