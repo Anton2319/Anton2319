@@ -152,6 +152,239 @@ As you see, it works perfectly fine!
 
 ![](media/Screenshot-2022-10-18-at-08.56.20.png)
 
+## Next steps
+
+Due to the nature of Android, it will destroy Activity and all the data stored inside to preserve RAM, so I recommend you to store Backend and Tunnel objects inside a singleton class. Let's create it:
+
+```
+public class PersistentConnectionProperties {
+    private static PersistentConnectionProperties mInstance= null;
+
+    private WgTunnel tunnel;
+    private GoBackend backend;
+
+
+    public WgTunnel getTunnel() {
+        try {
+            tunnel.getName();
+        }
+        catch (NullPointerException e) {
+            tunnel = new WgTunnel();
+        }
+        return tunnel;
+    }
+
+    public GoBackend getBackend() {
+        return backend;
+    }
+
+    public void setBackend(GoBackend backend) {
+        this.backend = backend;
+    }
+
+    public static synchronized PersistentConnectionProperties getInstance() {
+        if(null == mInstance){
+            mInstance = new PersistentConnectionProperties();
+        }
+        return mInstance;
+    }
+}
+```
+
+You can now access its parameters by getting the instance of PersistentConnectionProperties. Here's an example:
+
+`backend = PersistentConnectionProperties.getInstance().getBackend();`
+
+Update your code to reflect these changes. Put backend initialization to onCreate method:
+
+```
+@Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        try {
+            backend.getRunningTunnelNames();
+        }
+        catch (NullPointerException e) {
+            // backend cannot be created without context
+            PersistentConnectionProperties.getInstance().setBackend(new GoBackend(this));
+            backend = PersistentConnectionProperties.getInstance().getBackend();
+        }
+    }
+```
+
+### Tunnel Model
+To further organize the code, create a TunnelModel that will store the configuration:
+
+```
+public class TunnelModel {
+    public String privateKey;
+    public String IP;
+    public String dns;
+    public String endpoint;
+    // add allowed ips here calling the ArrayList add() method
+    public Collection<InetNetwork> allowedIPs = new ArrayList<InetNetwork>();
+    public String url;
+    public String publicKey;
+}
+```
+
+Update your connection code to reflect the changes:
+
+```
+backend.setState(tunnel, UP, new Config.Builder()
+                                .setInterface(interfaceBuilder.addAddress(InetNetwork.parse(tunnelModel.IP)).parsePrivateKey(tunnelModel.privateKey).build())
+                                .addPeer(peerBuilder.addAllowedIps(tunnelModel.allowedIPs).setEndpoint(InetEndpoint.parse(tunnelModel.endpoint)).parsePublicKey(tunnelModel.publicKey).build())
+                                .build());
+```
+
+### DataSource, TunnelDecoder
+
+If you have some kind of data source (API, manual configuration, etc) you can separate it from your main code into separate classes.
+Let's create a sample DataSource class and hardcode the data into it:
+
+```
+public class DataSource {
+
+    private static final String JSON_STRING = "{\"user_info\":{\"username\":\"redacted\",\"password\":\"redacted\",\"vpn-name\":\"redacted\",\"PrivateKey\":\"base64=\",\"Address\":\"10.0.0.2/24\",\"DNS\":\"8.8.8.8\",\"PublicKey\":\"redacted=\",\"AllowedIPs\":\"0.0.0.0/1, 128.0.0.0/1, ::/1, 8000::/1\",\"Endpoint\":\"redacted:51820\",\"status\":\"Active\",\"vpnConnection\":true},\"server_info\":{\"url\":\"10.0.0.1\"}}";
+
+    public static TunnelModel getTunnelModel() {
+        return TunnelDecoder.decode(JSON_STRING);
+    }
+
+}
+```
+Now let's decode our JSON to TunnelModel via TunnelDecoder:
+
+Install Gson into your project by adding this line to your gradle file: 
+
+`implementation 'com.google.code.gson:gson:2.8.4'`
+
+Create a new class that will utilize Gson to decode our sample JSON string:
+
+```
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.wireguard.config.InetNetwork;
+import com.wireguard.config.ParseException;
+
+public class TunnelDecoder {
+
+    public static TunnelModel decode(String jsonString) {
+        Gson gson = new Gson();
+        JsonObject json = gson.fromJson(jsonString, JsonObject.class);
+
+        TunnelModel model = new TunnelModel();
+        model.privateKey = json.get("user_info").getAsJsonObject().get("PrivateKey").getAsString();
+        model.IP = json.get("user_info").getAsJsonObject().get("Address").getAsString();
+        model.dns = json.get("user_info").getAsJsonObject().get("DNS").getAsString();
+        model.endpoint = json.get("user_info").getAsJsonObject().get("Endpoint").getAsString();
+        String allowedIPs[] = json.get("user_info").getAsJsonObject().get("AllowedIPs").getAsString().split(",\\s*");
+        for (String ip: allowedIPs) {
+            try {
+                model.allowedIPs.add(InetNetwork.parse(ip));
+            }
+            catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        model.publicKey = json.get("user_info").getAsJsonObject().get("PublicKey").getAsString();
+        model.url = json.get("server_info").getAsJsonObject().get("url").getAsString();
+
+        return model;
+    }
+
+}
+```
+
+And now you may extract all your data conveniently:
+
+`TunnelModel tunnelModel = DataSource.getTunnelModel();`
+
+
+### Disconnecting
+
+As you may notice, there's no way for our app to disconnect from the server.
+Here's how you can implement it: 
+
+```
+AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (backend.getState(PersistentConnectionProperties.getInstance().getTunnel()) == UP) {
+                        backend.setState(tunnel, DOWN, null);
+                    } else {
+                        backend.setState(tunnel, UP, new Config.Builder()
+                                .setInterface(interfaceBuilder.addAddress(InetNetwork.parse(tunnelModel.IP)).parsePrivateKey(tunnelModel.privateKey).build())
+                                .addPeer(peerBuilder.addAllowedIps(tunnelModel.allowedIPs).setEndpoint(InetEndpoint.parse(tunnelModel.endpoint)).parsePublicKey(tunnelModel.publicKey).build())
+                                .build());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+```
+
+Now if you click the button for the second time, it will shutdown the tunnel
+
+**Keep in mind that you need to store your backend, if you lose your reference to backend and tunnel objects there's no way to terminate a connection aside from forcestopping the app**
+
+Here's the updated MainActivity after all the tweaks applied:
+
+```
+public class MainActivity extends AppCompatActivity {
+
+    Backend backend;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        try {
+            backend.getRunningTunnelNames();
+        }
+        catch (NullPointerException e) {
+            // backend cannot be created without context
+            PersistentConnectionProperties.getInstance().setBackend(new GoBackend(this));
+            backend = PersistentConnectionProperties.getInstance().getBackend();
+        }
+    }
+
+    public void connect(View v) {
+        TunnelModel tunnelModel = DataSource.getTunnelModel();
+        Tunnel tunnel = PersistentConnectionProperties.getInstance().getTunnel();
+
+        Intent intentPrepare = GoBackend.VpnService.prepare(this);
+        if(intentPrepare != null) {
+            startActivityForResult(intentPrepare, 0);
+        }
+        Interface.Builder interfaceBuilder = new Interface.Builder();
+        Peer.Builder peerBuilder = new Peer.Builder();
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (backend.getState(PersistentConnectionProperties.getInstance().getTunnel()) == UP) {
+                        backend.setState(tunnel, DOWN, null);
+                    } else {
+                        backend.setState(tunnel, UP, new Config.Builder()
+                                .setInterface(interfaceBuilder.addAddress(InetNetwork.parse(tunnelModel.IP)).parsePrivateKey(tunnelModel.privateKey).build())
+                                .addPeer(peerBuilder.addAllowedIps(tunnelModel.allowedIPs).setEndpoint(InetEndpoint.parse(tunnelModel.endpoint)).parsePublicKey(tunnelModel.publicKey).build())
+                                .build());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+}
+```
 
 ## Class overview
 
