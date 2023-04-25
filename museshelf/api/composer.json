@@ -1,0 +1,14 @@
+{
+    "require": {
+        "doctrine/orm": "^2.14",
+        "doctrine/dbal": "^3.2",
+        "symfony/yaml": "^5.4",
+        "symfony/cache": "^5.4",
+        "doctrine/mongodb-odm": "^2.4",
+        "vlucas/phpdotenv": "^5.5",
+        "symfony/dotenv": "^5.4"
+    },
+    "autoload": {
+        "psr-0": {"": "src/"}
+    }
+}
