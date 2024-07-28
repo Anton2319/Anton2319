@@ -1,0 +1,85 @@
+<html>
+    <head>
+        <title>Coming Soon: PythonAnywhere</title>
+        <style>
+            body {
+                font-family: Helvetica, Arial, sans-serif;
+                width: 500px;
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 20px;
+            }
+
+            h1 {
+                font-family: Trebuchet MS, Helvetica, Arial, sans-serif;
+            }
+
+            .for-site-owner {
+                font-size: smaller;
+                margin-top: 30px;
+                color: gray;
+            }
+        </style>
+    </head>
+
+    <body>
+        <img src="https://s3.amazonaws.com/pythonanywhere-error-images/logo-234x35.png" />
+
+        <div class="main">
+            <h1>Coming Soon!</h1>
+
+            <p>
+                This is going to be another great website hosted by
+                <a href="https://www.pythonanywhere.com/">PythonAnywhere</a>.
+            </p>
+
+            <p>
+                PythonAnywhere lets you host, run, and code Python in the cloud.
+                Our free plan gives you access to machines with
+                everything already set up for you. You can develop and host
+                your website or any other code directly from your browser
+                without having to install software or manage your own server.
+            </p>
+
+            <p>
+                Need more power? Upgraded plans start at $5/month.
+            </p>
+
+            <p>
+                <a href="https://www.pythonanywhere.com/">You can find out more about PythonAnywhere here.</a>
+            </p>
+        </div>
+
+        <div class="for-site-owner">
+            <h2>Developer info</h2>
+
+            <p>
+                Hi!  If this is your PythonAnywhere-hosted site, then you're
+                almost there &mdash; you just need to create
+                a web app to handle this domain.
+            </p>
+
+            <p>
+                Go to the "Web" tab inside
+                PythonAnywhere and click "Add a new web app".
+                If you already have a web app and you want to use the same code for this domain
+                (say because you've just upgraded and want the site
+                you built at <code>yourusername.pythonanywhere.com</code> to run on
+                <code>www.yourdomain.com</code>) then
+                <a href="https://help.pythonanywhere.com/pages/UsingANewDomainForExistingWebApp">this help page should explain
+                everything</a>.
+            </p>
+
+            <p>
+                If you're having problems getting it all working, drop us a line at
+                liveusercare@pythonanywhere.com, or in
+                <a href="https://www.pythonanywhere.com/forums/">the forums</a>,
+                or using the "Send
+                feedback" link on the site.  We'll
+                get back to you as fast as we can!
+            </p>
+
+        </div>
+
+    </body>
+</html>
